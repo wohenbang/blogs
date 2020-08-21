@@ -1,0 +1,12 @@
+:root {
+  --bgColor: #545c64;
+  --textColor: #4aba89;
+  --borderStyle: 1px solid #666;
+}
+.p20 {
+  padding: 20px;
+  box-sizing: border-box;
+}
+.textCenter {
+  text-align: center;
+}
