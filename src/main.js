@@ -9,6 +9,8 @@ import 'assets/css/reset.css'
 // 全局css样式
 import 'assets/css/global.css'
 
+
+
 Vue.config.productionTip = false
 
 Vue.use(ElementUI);

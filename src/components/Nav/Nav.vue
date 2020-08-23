@@ -2,9 +2,7 @@
   <div id="nav">
     <el-row>
       <el-col :md="3">
-        <slot name="left">
-          <h1>Blogs</h1>
-        </slot>
+        <h1><slot name="left">Blogs</slot></h1>
       </el-col>
       <el-col :md="16">
         <slot name="middle">
@@ -15,6 +13,7 @@
             @select="handleSelect"
             background-color="#545c64"
             text-color="#fff"
+            :router="true"
             active-text-color="#ffd04b">
             <!-- <el-menu-item index="1" class="nopadding"><el-menu-item index="/home">首页</el-menu-item></el-menu-item> -->
             <el-menu-item index="/home">首页</el-menu-item>

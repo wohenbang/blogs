@@ -3,10 +3,42 @@
   --textColor: #4aba89;
   --borderStyle: 1px solid #666;
 }
+body {
+  font-size: 14px;
+}
 .p20 {
   padding: 20px;
   box-sizing: border-box;
 }
 .textCenter {
   text-align: center;
+}
+.fz18{
+  font-size: 18px;
+}
+.fz24{
+  font-size: 24px;
+}
+.textOrange {
+  color: orange;
+}
+.mb50 {
+  margin-bottom: 50px;
+}
+/* 浮动 */
+.fl {
+  float: left;
+}
+.fr {
+  float: right;
+}
+/* 清除浮动 */
+.clearfix:after {
+  content: "";
+  display: block;
+  height: 0;
+  clear: both;
+}
+.clearfix {
+  zoom: 1;
 }
