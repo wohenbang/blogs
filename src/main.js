@@ -10,7 +10,6 @@ import 'assets/css/reset.css'
 import 'assets/css/global.css'
 
 
-
 Vue.config.productionTip = false
 
 Vue.use(ElementUI);

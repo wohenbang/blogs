@@ -33,6 +33,7 @@
             </template>
             <el-menu-item-group>
               <el-menu-item index="user">用户管理</el-menu-item>
+              <el-menu-item index="useradd">添加用户</el-menu-item>
             </el-menu-item-group>
           </el-submenu>
           <el-submenu index="2">

@@ -8,6 +8,7 @@ const Memory = () => import('views/Memory.vue')
 
 const Admin = () => import('views/Admin/Admin.vue')
 const UserList = () => import('views/Admin/children/UserList.vue')
+const UserAdd = () => import('views/Admin/children/UserAdd.vue')
 const BlogList = () => import('views/Admin/children/BlogList.vue')
 const Writing = () => import('views/Admin/children/Writing.vue')
 
@@ -46,15 +47,19 @@ const routes = [
     children: [
       {
         path: '',
-        redirect: 'blog'
-      },
-      {
-        path: 'blog',
-        component: BlogList
+        redirect: 'user'
       },
       {
         path: 'user',
         component: UserList
+      },
+      {
+        path: 'useradd',
+        component: UserAdd
+      },
+      {
+        path: 'blog',
+        component: BlogList
       },
       {
         path: 'writing',
