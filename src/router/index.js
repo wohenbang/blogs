@@ -5,6 +5,7 @@ const Home = () => import('views/Home.vue')
 const Category = () => import('views/Category.vue')
 const Tags = () => import('views/Tags.vue')
 const Memory = () => import('views/Memory.vue')
+const Login = () => import('views/Login.vue')
 
 const Admin = () => import('views/Admin/Admin.vue')
 const UserList = () => import('views/Admin/children/UserList.vue')
@@ -39,6 +40,11 @@ const routes = [
     path: '/memory',
     name: 'Memory',
     component: Memory
+  },
+  {
+    path: '/login',
+    name: 'Login',
+    component: Login
   },
   {
     path: '/admin',

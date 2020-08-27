@@ -5,11 +5,12 @@
       <div slot="middle"><br></div>
       <el-dropdown slot="right">
         <span class="el-dropdown-link">
-          张三<i class="el-icon-arrow-down el-icon--right"></i>
+          {{$store.state.userInfo.username}}
+          <i class="el-icon-arrow-down el-icon--right"></i>
         </span>
         <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item>home</el-dropdown-item>
-          <el-dropdown-item>注销</el-dropdown-item>
+          <el-dropdown-item @click.native="toHome">Home</el-dropdown-item>
+          <el-dropdown-item @click.native="loginOut">注销</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
     </Nav>
@@ -57,6 +58,7 @@
 </template>
 
 <script>
+import axios from 'network/index'
 import Nav from 'components/Nav/Nav'
 export default {
   name: 'Admin',
@@ -74,12 +76,28 @@ export default {
     },
     handleClose(key, keyPath) {
       console.log(key, keyPath);
+    },
+    toHome() {
+      this.$reuter.push('/home')
+    },
+    loginOut() {
+      // 清除后台session 
+      axios({url: '/loginOut.php'}).then(res => console.log(res))
+    }
+  },
+  mounted() {
+    // 无登录信息，跳转到登录页面
+    if(!this.$store.state.userInfo.username){
+      this.$router.push('/login')
     }
   }
 }
 </script>
 
 <style scoped>
+  .router-link-active {
+    text-decoration: none;
+  }
   .el-dropdown-link {
     color: #fff;
   }

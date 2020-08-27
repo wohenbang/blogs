@@ -64,15 +64,20 @@
               <template slot-scope="scope">
                 <el-button
                   size="mini"
+                  :disabled="isdisabled"
                   @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
                 <el-button
                   size="mini"
                   type="danger"
+                  :disabled="isdisabled"
                   @click="handleDelete(scope.$index, scope.row)">删除</el-button>
                 <el-button
                   size="mini"
-                  type="danger"
-                  @click="handleDelete(scope.$index, scope.row)">停用</el-button>
+                  :type="scope.row.used==='1'?'danger':'success'"
+                  :disabled="isdisabled"
+                  @click="handleBlockUp(scope.$index, scope.row)">
+                    {{scope.row.used==='1'?"停用":"启用"}}
+                  </el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -82,7 +87,11 @@
               <el-pagination
                 background
                 layout="prev, pager, next"
-                :total="1000">
+                @prev-click="prevClick"
+                @next-click="nextClick"
+                @current-change="pageChange"
+                :page-size="pagesize"
+                :total="totalRow">
               </el-pagination>
             </el-col>
             <el-col :span="6">
@@ -104,7 +113,10 @@ export default {
       search_title: '',
       search_type: '',
       search_recomend: false,
-      userList: []
+      userList: [],
+      page: 1,
+      pagesize: 5,
+      totalRow: 0
     }
   },
   methods: {
@@ -120,14 +132,55 @@ export default {
     handleSelectionChange(val) {
       this.multipleSelection = val;
     },
+    handleEdit(index, row) {
+      console.log(index, row);
+    },
+    handleDelete(index, row) {
+      console.log(index, row);
+    },
+    handleBlockUp(index, row) {
+      console.log(index, row);
+    },
+    /**
+     * 请求数据
+     */
+    getUserList() {
+      axios({url: '/user-select.php', params: {
+        page: this.page,
+        pagesize: this.pagesize
+      }}).then(res=> {
+        this.userList = res.data.data
+        this.totalRow = res.data.count
+      })
+    },
+    /**
+     * 分页器相关方法
+     */ 
+    prevClick() {
+      this.page--
+      this.getUserList()
+    },
+    nextClick() {
+      this.page++
+      this.getUserList()
+    },
+    pageChange(page) {
+      this.page = page
+      this.getUserList()
+    }
 
   },
   filter: {
 
   },
+  computed: {
+    isdisabled(){
+      return this.$store.state.userInfo.is_admin==='0'?true:false
+    }
+  },
   created() {
-    axios({url: '/user-select.php'}).then(res=> this.userList = res.data)
-
+    // 请求数据
+    this.getUserList()
   },
 }
 </script>
