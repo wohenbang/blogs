@@ -22,52 +22,71 @@
     <el-row>
       <el-col>
         <el-card class="box-card">
+          <!-- 表格 -->
           <el-table
-            :data="tableData"
-            style="width: 100%">
+            ref="multipleTable"
+            :data="blogList"
+            tooltip-effect="dark"
+            style="width: 100%"
+            @selection-change="handleSelectionChange">
             <el-table-column
-              label="日期"
-              width="180">
+              prop="id"
+              label="id"
+              width="120">
+            </el-table-column>
+            <el-table-column
+              prop="uid"
+              label="作者"
+              width="220">
+            </el-table-column>
+            <el-table-column
+              prop="title"
+              label="标题"
+              width="220">
+            </el-table-column>
+            <el-table-column
+              prop="explainx"
+              label="简述"
+              width="220">
+            </el-table-column>
+            <el-table-column label="封面图片" width="220">
               <template slot-scope="scope">
-                <i class="el-icon-time"></i>
-                <span style="margin-left: 10px">{{ scope.row.date }}</span>
+                <img :src="scope.row.img_path" width="120" class="head_pic"/>
               </template>
             </el-table-column>
             <el-table-column
-              label="姓名"
-              width="180">
+              prop="cid"
+              label="所属分类"
+              width="220">
+            </el-table-column>
+            <el-table-column
+              prop="create_date"
+              label="发布时间"
+              show-overflow-tooltip>
               <template slot-scope="scope">
-                <el-popover trigger="hover" placement="top">
-                  <p>姓名: {{ scope.row.name }}</p>
-                  <p>住址: {{ scope.row.address }}</p>
-                  <div slot="reference" class="name-wrapper">
-                    <el-tag size="medium">{{ scope.row.name }}</el-tag>
-                  </div>
-                </el-popover>
+                {{scope.row.create_date | formatData}}
               </template>
             </el-table-column>
             <el-table-column label="操作">
               <template slot-scope="scope">
                 <el-button
                   size="mini"
-                  @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-                <el-button
-                  size="mini"
                   type="danger"
                   @click="handleDelete(scope.$index, scope.row)">删除</el-button>
-              </template>
-            </el-table-column>
-          </el-table>
+                </template>
+              </el-table-column>
+            </el-table>
           <el-row class="page-bar">
             <el-col :span="18">
-              <el-pagination
+                <el-pagination
                 background
                 layout="prev, pager, next"
-                :total="1000">
+                @prev-click="prevClick"
+                @next-click="nextClick"
+                @current-change="pageChange"
+                :page-size="pagesize"
+                :total="totalRow">
               </el-pagination>
-            </el-col>
-            <el-col :span="6">
-              <el-button>新增</el-button>
             </el-col>
           </el-row>
         </el-card>
@@ -77,6 +96,8 @@
 </template>
 
 <script>
+import axios from 'network/index'
+import qs from 'qs'
 export default {
   name: '',
   data() {
@@ -84,25 +105,80 @@ export default {
       search_title: '',
       search_type: '',
       search_recomend: false,
-      tableData: [{
-        date: '2016-05-02',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
-      }, {
-        date: '2016-05-04',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1517 弄'
-      }, {
-        date: '2016-05-01',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1519 弄'
-      }, {
-        date: '2016-05-03',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1516 弄'
-      }]
+      page: 1,
+      pagesize: 5,
+      totalRow: 0,
+      blogList: []
     }
-  }
+  },
+  methods: {
+    handleDelete(index, row) {
+      // console.log(index, row.id);
+      axios({url: '/blog-delete.php', params: {id: row.id}})
+      .then(res => {
+        if(res.data == '1'){
+          // let index = this.userList.findIndex(i => i.id === row.id)
+          // this.userList.splice(index, 1)
+          this.$message.success('文章已删除！');
+          this.getBlogs()
+        }
+      })
+    },
+    toggleSelection(rows) {
+      if (rows) {
+        rows.forEach(row => {
+          this.$refs.multipleTable.toggleRowSelection(row);
+        });
+      } else {
+        this.$refs.multipleTable.clearSelection();
+      }
+    },
+    handleSelectionChange(val) {
+      this.multipleSelection = val;
+    },
+    getBlogs() {
+      axios({url: '/blog-select.php', params: {
+        page: this.page,
+        pagesize: this.pagesize
+      }}).then(res=> {
+        console.log(res);
+        this.blogList = res.data.data
+        this.totalRow = res.data.count
+      })
+    },
+    /**
+     * 分页器相关方法
+     */ 
+    prevClick() {
+      this.page--
+      this.getBlogs()
+    },
+    nextClick() {
+      this.page++
+      this.getBlogs()
+    },
+    pageChange(page) {
+      this.page = page
+      this.getBlogs()
+    }
+  },
+  mounted() {
+    // 请求数据
+    this.getBlogs()
+  },
+  filters: {
+    formatData: function(value) {
+      value = value *1000
+      var date = new Date(value);
+      var YY = date.getFullYear() + '-';
+      var MM = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-';
+      var DD = (date.getDate() < 10 ? '0' + (date.getDate()) : date.getDate());
+      var hh = (date.getHours() < 10 ? '0' + date.getHours() : date.getHours()) + ':';
+      var mm = (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()) + ':';
+      var ss = (date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds());
+      return YY + MM + DD +" "+hh + mm + ss;
+    }
+  },
 }
 </script>
 

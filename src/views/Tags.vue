@@ -1,6 +1,7 @@
 <template>
   <div class="category">
     <Nav :activeIndex=activeIndex />
+    <h1 style="font-size: 50px;text-align:center">标签页功能未开发</h1>
     <!-- 标签 -->
     <el-row class="cate-header">
       <el-col :span="18" :push="3">

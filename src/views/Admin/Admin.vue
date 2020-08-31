@@ -82,14 +82,49 @@ export default {
     },
     loginOut() {
       // 清除后台session 
-      axios({url: '/loginOut.php'}).then(res => console.log(res))
+      // 清除vuex的userInfo
+      this.$store.commit('updateUserInfo', {})
+      // 清除cookie
+      var exp = new Date()
+      exp.setTime(exp.getTime() - 1)
+      var cval=this.getCookieObj().userInfo
+      if(cval) document.cookie= "userInfo="+cval+";expires="+exp.toGMTString()
+      // 跳转登录页面
+      this.$message.success('注销登录！');
+      setTimeout(() => this.$router.push('/login'), 1000)
+    
+    },
+    /**
+     * 获取cookie  并返回一个包含所有cookie信息的对象
+     * 但每个cookie的value是一个string
+     */
+    getCookieObj() {
+      var str = document.cookie;
+      var arr = str.split('; ');
+      var obj = {};
+      for(var i=0;i<arr.length;i++){
+          var a = arr[i].split('='); 
+          obj[a[0]] = a[1];
+      }
+      return obj
     }
   },
   mounted() {
-    // 无登录信息，跳转到登录页面
+
+    // 检查vuex有无登录信息
     if(!this.$store.state.userInfo.username){
-      this.$router.push('/login')
+      // vuex中无登录信息
+      // 再检查cookie有无登录信息
+      let cookieUserInfo = this.getCookieObj().userInfo
+      if(cookieUserInfo){
+        cookieUserInfo = JSON.parse(cookieUserInfo)
+        // 用户信息保存到vuex
+        this.$store.commit('updateUserInfo', cookieUserInfo)
+      }else{
+        this.$router.push('/login')
+      }
     }
+
   }
 }
 </script>

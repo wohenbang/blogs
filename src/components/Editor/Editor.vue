@@ -25,8 +25,8 @@ export default {
       this.editorContent = html
       this.catchData(this.editorContent)  // 把这个html通过catchData的方法传入父组件
     }
-    this.editor.customConfig.uploadImgServer = '你的上传图片的接口'
-    this.editor.customConfig.uploadFileName = '你自定义的文件名'
+    this.editor.customConfig.uploadImgServer = 'http://192.168.101.27/App/action/upload.php'
+    this.editor.customConfig.uploadFileName = 'c'
     this.editor.customConfig.menus = [          // 菜单配置
       'head',  // 标题
       'bold',  // 粗体

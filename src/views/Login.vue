@@ -40,6 +40,11 @@ export default {
 
           console.log(res.data);
           this.$message.success('登录成功！');
+          // 设置cookie
+          var exp = new Date();
+          exp.setTime(exp.getTime() + 60 * 100000);//过期时间 2分钟
+          document.cookie="userInfo="+JSON.stringify(res.data)+";expires=" + exp.toGMTString();
+
           setTimeout(() => this.$router.push('/admin'), 1000)
         }else {
           this.$message.error('用户名或密码错误，请重新输入');

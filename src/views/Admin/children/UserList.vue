@@ -3,7 +3,7 @@
     <!--  -->
     <el-row class="mb50">
       <el-col :span="6">
-        <el-button type="primary">添加用户</el-button>
+        <el-button @click="adduser" type="primary">添加用户</el-button>
       </el-col>
 
     </el-row>
@@ -18,10 +18,11 @@
             tooltip-effect="dark"
             style="width: 100%"
             @selection-change="handleSelectionChange">
-            <el-table-column
+            <!-- <el-table-column
               type="selection"
+              @selection-change="itemSelect"
               width="55">
-            </el-table-column>
+            </el-table-column> -->
             <el-table-column
               prop="id"
               label="id"
@@ -57,15 +58,12 @@
               label="创建日期"
               show-overflow-tooltip>
               <template slot-scope="scope">
-                {{scope.row.create_date}}
+                {{scope.row.create_date | formatData}}
               </template>
             </el-table-column>
             <el-table-column label="操作">
               <template slot-scope="scope">
-                <el-button
-                  size="mini"
-                  :disabled="isdisabled"
-                  @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+
                 <el-button
                   size="mini"
                   type="danger"
@@ -106,6 +104,7 @@
 
 <script>
 import axios from 'network/index'
+import qs from 'qs'
 export default {
   name: '',
   data() {
@@ -120,6 +119,9 @@ export default {
     }
   },
   methods: {
+    adduser() {
+      this.$router.push('/admin/useradd')
+    },
     toggleSelection(rows) {
       if (rows) {
         rows.forEach(row => {
@@ -132,14 +134,39 @@ export default {
     handleSelectionChange(val) {
       this.multipleSelection = val;
     },
-    handleEdit(index, row) {
-      console.log(index, row);
-    },
+    /**
+     * 删除用户
+     */
     handleDelete(index, row) {
-      console.log(index, row);
+      // console.log(index, row.id);
+      axios({url: '/user-delete.php', params: {id: row.id}})
+      .then(res => {
+        if(res.data == '1'){
+          // let index = this.userList.findIndex(i => i.id === row.id)
+          // this.userList.splice(index, 1)
+          this.$message.success('用户已删除！');
+          this.getUserList()
+        }
+      })
     },
+    /**
+     * 用户停用
+     */
     handleBlockUp(index, row) {
-      console.log(index, row);
+      console.log(index, row.used);
+      let status = row.used=='1'?'0':'1'
+      let postData = qs.stringify({
+        id: row.id,
+        used: status
+      })
+      axios({url: '/changeStatus.php', method: 'post', data: postData})
+      .then(res => {
+        // console.log(res);
+        if(res.data == '1') {
+          let index = this.userList.findIndex(i => i.id === row.id)
+          this.userList[index].used = status
+        }
+      })
     },
     /**
      * 请求数据
@@ -168,10 +195,19 @@ export default {
       this.page = page
       this.getUserList()
     }
-
   },
-  filter: {
-
+  filters: {
+    formatData: function(value) {
+      value = value *1000
+      var date = new Date(value);
+      var YY = date.getFullYear() + '-';
+      var MM = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-';
+      var DD = (date.getDate() < 10 ? '0' + (date.getDate()) : date.getDate());
+      var hh = (date.getHours() < 10 ? '0' + date.getHours() : date.getHours()) + ':';
+      var mm = (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()) + ':';
+      var ss = (date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds());
+      return YY + MM + DD +" "+hh + mm + ss;
+    }
   },
   computed: {
     isdisabled(){

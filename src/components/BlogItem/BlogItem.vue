@@ -1,31 +1,54 @@
 <template>
-  <el-row class="blog-item">
+  <el-row class="blog-item" @click.native="toblog()">
     <el-col class="blog-item-left" :md="16">
-      <h3 class="blog-title">发的水电人头发生的地方</h3>
-      <p class="blog-text">挂风扇的分公司的方法水电费发DVD是范德萨范德萨发的所发生的是的地方发水电费是对方适当方式的方式的防辐射的法师
-        第三方的身份第三方是对方适当方式的方式的防守打法个环境开了房关键是都快发的所发生的是的地方发水电费是对方适当方式的方式的防辐射的法师
-        第三方的身份第三方是对方适当方式的方式的防守打法个环境开了房关键是都快疯发的所发生的是的地方发水电费是对方适当方式的方式的防辐射的法师
-        第三方的身份第三方是对方适当方式的方式的防守打法个环境开了房关键是都快疯疯了水电费地方地方第三方士大夫发防守打法胜多负少飞洒发生法sf
-        第三方士大夫电费是对方适当方式的方式的官方第三个发斯蒂芬第三方 第三方打发斯蒂芬是打发打的费大声道fsdfsdfsd</p>
+      <h3 class="blog-title">{{blogInfo.title}}</h3>
+      <p class="blog-text">{{blogInfo.explainx}}</p>
       <div class="bottom-bar clearfix">
         <div class="author-img fl"><img src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"/></div>
         <div class="info fl">
-          <span class="author">番薯藤</span>
-          <span class="date">2020-08-22</span>
+          <span class="author">{{blogInfo.uid}}</span>
+          <span class="date">{{blogInfo.create_date | formatData}}</span>
           <i class="el-icon-view"></i>
           <span class="num">222</span>
         </div>
       </div>
     </el-col>
     <el-col class="textCenter" :md="8">
-      <img width="80%" src="https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg" alt="">
+      <img width="300" height="160" :src="blogInfo.img_path" alt="">
     </el-col>
   </el-row>
 </template>
 
 <script>
 export default {
-  name: 'BlogItem'
+  name: 'BlogItem',
+  props: {
+    blogInfo: {
+      type: Object
+    }
+  },
+  methods: {
+    toblog() {
+      // console.log(this.blogInfo.id);
+      this.$router.push({
+        path: '/blog',
+        query: {id: this.blogInfo.id}
+      })
+    }
+  },
+  filters: {
+    formatData: function(value) {
+      value = value *1000
+      var date = new Date(value);
+      var YY = date.getFullYear() + '-';
+      var MM = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-';
+      var DD = (date.getDate() < 10 ? '0' + (date.getDate()) : date.getDate());
+      var hh = (date.getHours() < 10 ? '0' + date.getHours() : date.getHours()) + ':';
+      var mm = (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()) + ':';
+      var ss = (date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds());
+      return YY + MM + DD +" "+hh + mm + ss;
+    }
+  },
 }
 </script>
 
@@ -35,6 +58,7 @@ export default {
     padding-bottom: 10px;
     margin-bottom: 50px;
     border-bottom: var(--borderStyle);
+    cursor: pointer;
   }
   .blog-item-left {
     position: relative;

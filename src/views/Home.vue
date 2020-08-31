@@ -5,12 +5,22 @@
       <!-- 左边博客列表 -->
       <el-col class="left-blogs" :md="18">
         <Card>
+          <template slot="right">共<span class="fz24 textOrange">{{totalRow}}</span>篇</template>
           <template slot="content">
-            <blog-item/>
-            <blog-item/>
-            <blog-item/>
-            <blog-item/>
-            <blog-item/>
+            <blog-item v-for="(item, index) in blogList" :key="index" :blogInfo="item" />
+            <el-row class="page-bar">
+              <el-col :span="18">
+                <el-pagination
+                background
+                layout="prev, pager, next"
+                @prev-click="prevClick"
+                @next-click="nextClick"
+                @current-change="pageChange"
+                :page-size="pagesize"
+                :total="totalRow">
+                </el-pagination>
+              </el-col>
+            </el-row>
           </template>
         </Card>
       </el-col>
@@ -67,11 +77,43 @@ import Nav from 'components/Nav/Nav'
 import Footer from 'components/Footer/Footer'
 import BlogItem from 'components/BlogItem/BlogItem'
 import Card from 'components/Card/Card'
+import axios from 'network/index'
 export default {
   name: 'Home',
   data() {
     return {
-      activeIndex: '1'
+      activeIndex: '1',
+      page: 1,
+      pagesize: 5,
+      totalRow: 0,
+      blogList: []
+    }
+  },
+  methods: {
+    getBlogs() {
+      axios({url: '/blog-select.php', params: {
+        page: this.page,
+        pagesize: this.pagesize
+      }}).then(res=> {
+        // console.log(res);
+        this.blogList = res.data.data
+        this.totalRow = res.data.count
+      })
+    },
+    /**
+     * 分页器相关方法
+     */ 
+    prevClick() {
+      this.page--
+      this.getBlogs()
+    },
+    nextClick() {
+      this.page++
+      this.getBlogs()
+    },
+    pageChange(page) {
+      this.page = page
+      this.getBlogs()
     }
   },
   components: {
@@ -79,7 +121,11 @@ export default {
     Footer,
     BlogItem,
     Card
-  }
+  },
+  created() {
+    this.getBlogs()
+  },
+  
 }
 </script>
 
